@@ -1,7 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Constants from 'expo-constants';
 import { colors, fonts, gStyle } from '../constants';
 
 // components
@@ -61,7 +60,7 @@ function More({ navigation }) {
                 />
             </ScrollView>
             <Text style={styles.versionText}>
-                {`Versão: ${Constants.expoVersion}`}
+                {`Versão: 1.12.5`}
             </Text>
         </View>
     );

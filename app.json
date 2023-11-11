@@ -4,7 +4,7 @@
     "description": "Streamy: Brazilian streaming service",
     "scheme": "streamy",
     "slug": "streamy",
-    "privacy": "private",
+    "privacy": "unlisted",
     "version": "0.0.2",
     "platforms": [
       "android",
@@ -21,17 +21,35 @@
       "resizeMode": "contain"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/9962373b-6a21-40c1-830c-e5d75221b368"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "android": {
-      "versionCode": 2
+      "versionCode": 2,
+      "package": "com.h027.streamy"
     },
     "ios": {
       "buildNumber": "0.0.2",
       "supportsTablet": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9962373b-6a21-40c1-830c-e5d75221b368"
+      }
+    },
+    "plugins": [
+      [
+        "expo-updates",
+        {
+          "username": "h027"
+        }
+      ]
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
