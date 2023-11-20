@@ -1,0 +1,4 @@
+<resources>
+  <string name="app_name">Streamy</string>
+  <string name="expo_runtime_version">0.0.4</string>
+</resources>

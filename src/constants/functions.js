@@ -4,13 +4,10 @@ import * as Font from 'expo-font';
 
 import preloadFonts from './preloadFonts';
 import preloadImages from './preloadImages';
-
 // cache fonts
-// /////////////////////////////////////////////////////////////////////////////
 const cacheFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
 // cache images
-// /////////////////////////////////////////////////////////////////////////////
 const cacheImages = (images) =>
     Object.values(images).map((image) => {
         if (typeof image === 'string') {
@@ -21,7 +18,6 @@ const cacheImages = (images) =>
     });
 
 // preload async
-// /////////////////////////////////////////////////////////////////////////////
 const loadAssetsAsync = async () => {
     // preload assets
     const fontAssets = cacheFonts(preloadFonts);

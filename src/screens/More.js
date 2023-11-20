@@ -12,46 +12,58 @@ import TouchLineItem from '../components/TouchLineItem';
 import SvgBell from '../icons/Svg.Bell';
 import SvgCheck from '../icons/Svg.Check';
 
-// full :: https://help.netflix.com/legal/privacy?headless=true&locale=en-US
-const privacyUrl = 'https://help.netflix.com/legal/privacy?headless=true';
-
-const alertSignOut = () => {
-    Alert.alert(
-        'Encerrar sessão',
-        'Tem certeza de que deseja sair?',
-        [{ text: 'Não' }, { text: 'Sim' }],
-        { cancelable: false }
-    );
-};
+// contexts
+import { useAuthContext } from '../contexts/AuthContext';
 
 function More({ navigation }) {
+    const { logout } = useAuthContext();
+
+    const alertSignOut = () => {
+        Alert.alert(
+            'Encerrar sessão',
+            'Tem certeza de que deseja sair?',
+            [
+                {
+                    text: 'Não',                    
+                },
+                {
+                    text: 'Sim',
+                    onPress: () => {
+                        logout();
+                    },
+                },
+            ],
+            { cancelable: false }
+        );
+    }
+
     return (
         <View style={gStyle.container}>
             <HeaderAccounts />
             <ScrollView showsVerticalScrollIndicator={false}>
                 <TouchLineItem
                     icon={<SvgBell />}
-                    onPress={() => navigation.navigate('MoreNotifications')}
+                    onPress={() => null}
                     showBorder
                     text="Notificações"
                 />
                 <TouchLineItem
                     icon={<SvgCheck />}
-                    onPress={() => navigation.navigate('MoreMyList')}
+                    onPress={() => null}
                     showBorder
                     text="Minha lista"
                 />
                 <TouchLineItem
-                    onPress={() => navigation.navigate('MoreAppSettings')}
+                    onPress={() => null}
                     showArrow={false}
                     showBorder
                     text="Configurações do aplicativo"
                 />
-                <TouchLineItem
+                {/* <TouchLineItem
                     onPress={() => navigation.navigate('ModalWebView', { url: privacyUrl })}
                     showArrow={false}
                     text="Termos"
-                />
+                /> */}
                 <TouchLineItem onPress={() => null} showArrow={false} text="Ajuda" />
                 <TouchLineItem
                     onPress={() => alertSignOut()}
@@ -60,7 +72,7 @@ function More({ navigation }) {
                 />
             </ScrollView>
             <Text style={styles.versionText}>
-                {`Versão: 1.12.5`}
+                {`Versão: 1.0.5 BETA`}
             </Text>
         </View>
     );

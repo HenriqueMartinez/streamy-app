@@ -1,43 +1,51 @@
-import { Image } from 'expo-image';
-import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { colors, gStyle, tmdb, fonts } from '../constants';
-import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { colors, fonts, gStyle } from '../constants';
 
-function MediaContent({ selectedMedia }) {
-    const BASE_URL = tmdb.images.secure_base_url;
-    const SIZE = tmdb.images.backdrop_sizes[2];
+// components
+import TouchTextIcon from './TouchTextIcon';
+import TouchPlayButton from './TouchPlayButton';
 
-    const poster = `${BASE_URL}${SIZE}/`;
+// icons
+import SvgCheck from '../icons/Svg.Check';
+import SvgInfo from '../icons/Svg.Info';
+import SvgPlus from '../icons/Svg.Plus';
 
+// formatters
+import formatDate from './../utils/formatDate';
+
+function MediaContent({ navigation, selectedMedia }) {
     return (
         <View style={styles.container}>
-            <Image
-                key={selectedMedia.id}
-                source={{
-                    uri: `${poster}${selectedMedia.backdrop_path}`,
-                }}
-                contentFit='cover'
-                transition={600}
-                style={[
-                    styles.backgroundImage,
-                ]}
-            />
-
-            <View style={styles.backgroundMask} />
 
             <View style={styles.informations}>
-                <Text style={styles.infoTitle}>{selectedMedia.title ?? selectedMedia.name}</Text>
-                <View style={styles.otherInfo}>
-                    {/* <Text style={[styles.otherInfoTitle, { color: Number(selectedMedia.rating) > 5 ? '#86efac' : '#E5E5E5' }]}>Avaliação {selectedMedia.rating}</Text> */}
-                    <Text style={[styles.otherInfoTitle, { color: '#86efac' }]}>Avaliação 5.1</Text>
-                    <Text style={styles.otherInfoTitle}>Estreou em 1 de nov. de 2001</Text>
-                    <Text style={styles.otherInfoTitle}>{selectedMedia.title ? 'Filme' : 'Série'}</Text>
-                </View>
-                <Text numberOfLines={4} style={styles.infoDescription}>{selectedMedia.overview}</Text>
-                {/* <View style={styles.buttonArea}>
+                <Text numberOfLines={2} style={styles.infoTitle}>{selectedMedia?.title ?? selectedMedia?.name}</Text>
 
-                </View> */}
+                <View style={styles.otherInfo}>
+                    {(selectedMedia?.release_date ?? selectedMedia?.first_air_date) && (
+                        <Text style={styles.otherInfoTitle}>
+                            {selectedMedia.media_type === 'movie' ? 'Lançado em' : 'Estreou em'}{' '}
+                            {formatDate(selectedMedia.release_date ?? selectedMedia.first_air_date).toString()}
+                        </Text>
+                    )}
+                </View>
+
+                {selectedMedia?.overview && (
+                    <Text numberOfLines={3} style={styles.infoDescription}>
+                        {selectedMedia.overview}
+                    </Text>
+                )}
+
+                <View style={[gStyle.flexRowSpace, { marginTop: 15 }]}>
+                    <TouchTextIcon
+                        icon={<SvgPlus />}
+                        onPress={() => null}
+                        text='Adicionar a lista'
+                    />
+
+                    <TouchPlayButton onPress={() => navigation.navigate('ModalVideo', { ...selectedMedia })} />
+
+                    <TouchTextIcon icon={<SvgInfo />} onPress={() => null} text='Informações' />
+                </View>
             </View>
         </View>
     );
@@ -45,80 +53,48 @@ function MediaContent({ selectedMedia }) {
 
 const styles = StyleSheet.create({
     container: {
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-    },
-
-    backgroundImage: {
-        position: 'absolute',
-        height: '100%',
-        marginRight: 8,
-        resizeMode: 'contain',
+        position: 'relative',
         width: '100%',
     },
 
     informations: {
-        position: 'absolute',
-        width: '100%',
-        height: '65%',
+        ...StyleSheet.absoluteFillObject,
+        position: 'relative',
         justifyContent: 'center',
         alignItems: 'center',
-        flexDirection: 'column',
+        padding: 20,
+        rowGap: 20,
     },
 
     infoTitle: {
-        position: 'absolute',
         color: colors.white,
         fontSize: 30,
         fontFamily: fonts.medium,
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        top: '15%',
-        textAlign: 'center'
+        textAlign: 'center',
+        marginBottom: 10,
     },
 
     otherInfo: {
-        position: 'absolute',
-        top: '35%',
         flexDirection: 'row',
-        alignItems: 'flex-start',
-        gap: 10,
+        alignItems: 'center',
+        marginBottom: 10,
     },
 
     otherInfoTitle: {
         color: colors.white,
         fontSize: 16,
-        // fontFamily: fonts.medium,
-        // fontWeight: 'bold',
-        // textTransform: 'uppercase',
-        // top: '15%',
-        textAlign: 'center'
+        textAlign: 'center',
+        marginRight: 10,
     },
 
     infoDescription: {
-        position: 'absolute',
         color: 'gray',
-        width: '90%',
         fontSize: 16,
-        // fontFamily: fonts.medium,
-        // fontWeight: 'bold',
-        top: '50%'
-    },
-
-    buttonArea: {
-        position: 'absolute',
-        width: '100%',
-        height: '25%',
-        bottom: 0,
-        backgroundColor: 'red'
-    },
-
-    backgroundMask: {
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        backgroundColor: colors.black50
+        fontFamily: fonts.medium,
+        textAlign: 'center',
+        marginBottom: 10,
     }
 });
 

@@ -1,54 +1,83 @@
-import axios from 'axios';
+import React from 'react';
 import { useEffect, useState } from 'react';
-import { ScrollView, Text, View, StyleSheet } from 'react-native';
-import { useScrollToTop } from '@react-navigation/native';
-import { colors, gStyle } from '../constants';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
+import { tmdb, colors, gStyle } from '../constants';
 
 import Carousel from '../components/Carousel';
 import MediaContent from '../components/MediaContent';
+import HeaderHome from '../components/HeaderHome';
+
+import { useMovieTVContext } from '../contexts/MovieTVData';
 
 function Home({ navigation }) {
-    const BASE_URL = 'https://api.themoviedb.org/3';
-    const API_KEY = '69d1654897a16e57275142eaf00c632e';
+    const { trending } = useMovieTVContext();
 
     const [selectedMedia, setSelectedMedia] = useState({});
-    const [trending, setTrending] = useState([]);
+
+    const BASE_URL_IMAGE = tmdb.images.secure_base_url;
+    const SIZE = tmdb.images.backdrop_sizes[2];
+    const poster = `${BASE_URL_IMAGE}${SIZE}/`;
 
     useEffect(() => {
-        const source = axios.CancelToken.source();
-
-        axios
-            .get(`${BASE_URL}/trending/all/week`, {
-                params: {
-                    api_key: API_KEY,
-                    region: 'BR',
-                    language: 'pt-BR'
-                },
-                cancelToken: source.token
-            })
-            .then(response => {
-                setTrending(response.data.results);
-                setSelectedMedia(response.data.results[0]);
-            })
-            .catch(error => {
-                if (axios.isCancel(error)) {
-                    console.log('Requisição cancelada:', error.message);
-                } else {
-                    console.error('Erro na requisição:', error.message);
-                }
-            });
-
-        return () => {
-            source.cancel('Requisição cancelada pelo cleanup do componente');
-        };
-    }, []);
+        if (trending.length > 0) {
+            setSelectedMedia(trending[0])
+        }
+    }, [trending]);
 
     return (
-        <View style={gStyle.container}>            
-            <MediaContent selectedMedia={selectedMedia} />            
-            <Carousel trending={trending} onPressCarouselItem={(index) => setSelectedMedia(trending[index])} />
+        <View style={gStyle.container}>
+            {trending.length === 0 ? (
+                <ActivityIndicator size="large" color={colors.brandPrimary} style={{ flex: 1 }} />
+            ) : (
+                <>
+                    <Image
+                        source={{
+                            uri: `${poster}${selectedMedia?.backdrop_path ?? selectedMedia.poster_path}`,
+                        }}
+                        contentFit='cover'
+                        transition={600}
+                        style={[
+                            styles.backgroundImage,
+                        ]}
+                    />
+                    <View style={styles.backgroundMask} />
+                    <HeaderHome navigation={navigation} />
+                    <View style={styles.contentContainer}>
+                        <MediaContent navigation={navigation} selectedMedia={selectedMedia} />
+                        <View style={styles.carouselContainer}>
+                            <Carousel trending={trending} onPressCarouselItem={(index) => setSelectedMedia(trending[index])} />
+                        </View>
+                    </View>
+                </>
+            )}
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    backgroundImage: {
+        position: 'absolute',
+        height: '100%',
+        resizeMode: 'cover',
+        width: '100%',
+    },
+
+    backgroundMask: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: colors.black50,
+    },
+
+    contentContainer: {
+        flex: 1,
+    },
+
+    carouselContainer: {
+        position: 'absolute',
+        bottom: 5,
+        left: 0,
+        right: 0,
+    },
+});
 
 export default Home;

@@ -7,15 +7,20 @@ import { colors, device, fonts, gStyle, images } from '../constants';
 import SvgEdit from '../icons/Svg.Edit';
 import SvgPlus from '../icons/Svg.Plus';
 
+// contexts
+import { useAuthContext } from '../contexts/AuthContext';
+
 function HeaderAccounts() {
     const navigation = useNavigation();
+
+    const { user } = useAuthContext();
 
     return (
         <View style={styles.container}>
             <View style={styles.containerAccounts}>
                 <View style={styles.containerUser}>
-                    <Image source={images.dev} style={styles.avatar} />
-                    <Text style={[styles.username, styles.usernameActive]}>realmagnata</Text>
+                    <Image source={images[user.image]} style={styles.avatar} />
+                    <Text style={[styles.username, styles.usernameActive]}>{user.name}</Text>
                 </View>
 
                 {/* <View style={styles.containerUser}>
