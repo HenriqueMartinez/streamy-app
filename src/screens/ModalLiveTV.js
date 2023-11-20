@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { colors, gStyle } from '../constants';
+import { colors, gStyle, api } from '../constants';
 
 import { Video } from 'expo-av';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -67,7 +67,17 @@ function ModalLiveTV() {
     };
 
     useEffect(() => {
-        console.log(lives.length)
+        if (lives.length === 0) {
+            async function loadLives() {
+                const livesResponse = await api.get('/api/streamy/getLiveTV');
+                if (livesResponse) {
+                    setLives(livesResponse.data.lives);
+                }
+            }
+
+            loadLives();
+        }
+
         return () => {
             ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
         };
@@ -115,8 +125,8 @@ function ModalLiveTV() {
                             listMode='SCROLLVIEW'
                             scrollViewProps={{
                                 nestedScrollEnabled: true,
-                                
-                            }}                            
+
+                            }}
                             style={{ marginTop: 10 }}
                         />
                         <View style={styles.line} />
